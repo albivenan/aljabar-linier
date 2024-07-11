@@ -85,7 +85,7 @@ const Home = () => {
       </div>
 
 
-      <div className="phone w-1/2 pr-8 relative rounded-l-3xl shadow-xl overflow-hidden">
+      <div className="phone w-1/2 relative rounded-l-3xl shadow-xl overflow-hidden">
       <div className="background absolute w-[200vh] h-[200vh]"></div>
 
       <div className="h-screen overflow-scroll px-8 grid gap-y-6 py-6 z-1 relative">
