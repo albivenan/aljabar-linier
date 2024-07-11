@@ -4,26 +4,26 @@ import Image from 'next/image';
 import profile from "../../public/albivenanza.jpg"
 
 const Home = () => {
-    const initialRow = Array(3).fill(0); // Create an array filled with 0s
-    const initialMatrix = Array.from({ length: 3 }, () => [...initialRow]); // Create a 3x3 matrix with initial values as 0
+    const inisialisasiBaris = Array(3).fill(0);
+    const inisialisasiMatriks = Array.from({ length: 3 }, () => [...inisialisasiBaris]);
 
-    const [matrix, setMatrix] = useState<number[][]>(initialMatrix);
-    const [inverseMatrix, setInverseMatrix] = useState<number[][]>(initialMatrix);
+    const [matriks, setMatriks] = useState<number[][]>(inisialisasiMatriks);
+    const [inversMatriks, setInverseMatrix] = useState<number[][]>(inisialisasiMatriks);
     const [error, setError] = useState<string>('');
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, rowIdx: number, colIdx: number) => {
-        const value = parseFloat(e.target.value);
-        if (!isNaN(value)) {
-            const newMatrix = matrix.map((row, rIdx) =>
-                rIdx === rowIdx ? row.map((col, cIdx) => (cIdx === colIdx ? value : col)) : row
+        const nilai = parseFloat(e.target.value);
+        if (!isNaN(nilai)) {
+            const newMatrix = matriks.map((row, rIdx) =>
+                rIdx === rowIdx ? row.map((col, cIdx) => (cIdx === colIdx ? nilai : col)) : row
             );
-            setMatrix(newMatrix);
+            setMatriks(newMatrix);
         }
     };
 
     const calculateInverse = () => {
         try {
-            const determinant = sarrusDeterminant(matrix);
+            const determinant = sarrusDeterminant(matriks);
             if (determinant === 0) {
                 throw new Error("Nilai matriks yang dimasukkan tidak memiliki invers karena determinan adalah 0");
             }
@@ -32,7 +32,7 @@ const Home = () => {
             for (let r = 0; r < 3; r++) {
                 const cofactorRow: number[] = [];
                 for (let c = 0; c < 3; c++) {
-                    const minor: number = matrix[(c + 1) % 3][(r + 1) % 3] * matrix[(c + 2) % 3][(r + 2) % 3] - matrix[(c + 1) % 3][(r + 2) % 3] * matrix[(c + 2) % 3][(r + 1) % 3];
+                    const minor: number = matriks[(c + 1) % 3][(r + 1) % 3] * matriks[(c + 2) % 3][(r + 2) % 3] - matriks[(c + 1) % 3][(r + 2) % 3] * matriks[(c + 2) % 3][(r + 1) % 3];
                     cofactorRow.push(((-1) ** (r + c)) * minor);
                 }
                 cofactors.push(cofactorRow);
@@ -64,7 +64,7 @@ const Home = () => {
       <div className="h-full py-8 flex flex-col justify-around items-center">
         <div className="text-lg text-center">
           <h2 className='font-bold'>HASIL KERJA UAS GENAP</h2>
-          <h2 className='font-bold'>APLIKASI INVERS MATRIKS BUJUR SANGKAR (3 X 3) MENGGUNAKAN METODE SARRUS</h2>
+          <h2 className='font-bold'>APLIKASI INVERS MATRIKS BUJUR SANGKAR (3X3) MENGGUNAKKAN METODE SARRUS</h2>
           <p className='text-sm mt-'>Diselesaikan guna memenuhi tugas akhir pada mata kuliah Aljabar Linier</p>
           <p className='text-sm'>Dosen Pengampu: Buang Budi Wahono, S. Si., M. Kom.</p>
         </div>
@@ -89,10 +89,10 @@ const Home = () => {
       <div className="background absolute w-[200vh] h-[200vh]"></div>
 
       <div className="h-screen overflow-scroll px-8 grid gap-y-6 py-6 z-1 relative">
-            <h1 className="text-3xl font-extrabold text-center mb-2">Aplikasi Opearsi Invers Matriks Bujur Sangkar (3 x 3) dengan metode Sarrus</h1>
+            <h1 className="text-3xl font-extrabold text-center mb-2">Aplikasi Operasi Invers Matriks Bujur Sangkar (3 x 3) Dengan Metode Sarrus</h1>
             <div className="grid gap-y-2">
             <label className='font-bold text-lg'>Masukkan nilai pada kolom dan baris berikut: </label>
-                {matrix.map((row, rIdx) => (
+                {matriks.map((row, rIdx) => (
                     <div key={rIdx} className="grid grid-cols-3 gap-4">
                         {row.map((col, cIdx) => (
                             <input
@@ -108,7 +108,7 @@ const Home = () => {
             </div>
             
             <h2 className="text-xl font-bold">Nilai matriks asli:</h2>
-            {matrix.map((row, rIdx) => (
+            {matriks.map((row, rIdx) => (
     <div className='grid grid-cols-3 gap-4' key={rIdx}>
         {row.map((element, idx) => (
             <div key={idx} className='p-2 rounded-xl focus:border-neutral-700 bg-white'>
@@ -130,7 +130,7 @@ const Home = () => {
     <p className="text-red-500 font-bold">{error}</p>
 ) : (
     <div>
-        {inverseMatrix.map((row, rIdx) => (
+        {inversMatriks.map((row, rIdx) => (
             <div className='grid grid-cols-3 gap-4' key={rIdx}>
                 {row.map((element, idx) => (
                     <div key={idx} className='p-2 rounded-xl border-2 border-black my-2'>
@@ -155,13 +155,13 @@ const Home = () => {
 
 export default Home;
 
-function sarrusDeterminant(matrix: number[][]) {
+function sarrusDeterminant(matriks: number[][]) {
     return (
-        matrix[0][0] * matrix[1][1] * matrix[2][2] +
-        matrix[0][1] * matrix[1][2] * matrix[2][0] +
-        matrix[0][2] * matrix[1][0] * matrix[2][1] -
-        matrix[0][2] * matrix[1][1] * matrix[2][0] -
-        matrix[0][0] * matrix[1][2] * matrix[2][1] -
-        matrix[0][1] * matrix[1][0] * matrix[2][2]
+        matriks[0][0] * matriks[1][1] * matriks[2][2] +
+        matriks[0][1] * matriks[1][2] * matriks[2][0] +
+        matriks[0][2] * matriks[1][0] * matriks[2][1] -
+        matriks[0][2] * matriks[1][1] * matriks[2][0] -
+        matriks[0][0] * matriks[1][2] * matriks[2][1] -
+        matriks[0][1] * matriks[1][0] * matriks[2][2]
     );
 }
