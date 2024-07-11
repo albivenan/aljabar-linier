@@ -64,8 +64,8 @@ const Home = () => {
       <div className="h-full py-8 flex flex-col justify-around items-center">
         <div className="text-lg text-center">
           <h2 className='font-bold'>HASIL KERJA UAS GENAP</h2>
-          <h2 className='font-bold'>APLIKASI KONVERSI KOORDINAT POLAR KE KARTESIUS DAN SEBALIKNYA</h2>
-          <p className='text-sm mt-'>Diselesaikan guna memenuhi tugas akhir pada mata kuliah Kalkulus II</p>
+          <h2 className='font-bold'>APLIKASI INVERS MATRIKS BUJUR SANGKAR (3 X 3) MENGGUNAKAN METODE SARRUS</h2>
+          <p className='text-sm mt-'>Diselesaikan guna memenuhi tugas akhir pada mata kuliah Aljabar Linier</p>
           <p className='text-sm'>Dosen Pengampu: Buang Budi Wahono, S. Si., M. Kom.</p>
         </div>
         <div className="w-[30vh] h-[30vh] flex justify-center items-center image">
