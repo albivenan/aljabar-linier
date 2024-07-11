@@ -11,6 +11,11 @@
 }
 
 
+*::-webkit-scrollbar {
+  display: none;
+}
+
+
 .image {
   background: url('../../public/border-removebg-preview.png');
   object-fit: cover;
@@ -29,9 +34,10 @@
 }
 
 .background {
-  background: #56ab2f; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #56ab2f, #a8e063); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #56ab2f, #a8e063); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #ef32d9;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to bottom, #89fffd, #ef32d9);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to bottom, #89fffd, #ef32d9); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
   animation: rotate 10s linear infinite;
   /* z-index: -1; */
   top: 0;

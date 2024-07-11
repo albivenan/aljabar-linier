@@ -1,78 +1,72 @@
 "use client"
+import { useState } from 'react';
 import Image from 'next/image';
-import React, { useState } from 'react';
 import profile from "../../public/albivenanza.jpg"
 
-const sqrt = (value: number): number => {
-  if (value < 0) throw new Error('Negative value');
-  let x = value;
-  let y = (x + value / x) / 2.0;
-  while (Math.abs(x - y) > 1e-10) {
-    x = y;
-    y = (x + value / x) / 2.0;
-  }
-  return x;
-};
-
-const atan2 = (y: number, x: number): number => {
-  if (x > 0) return Math.atan(y / x);
-  if (x < 0 && y >= 0) return Math.atan(y / x) + Math.PI;
-  if (x < 0 && y < 0) return Math.atan(y / x) - Math.PI;
-  if (x === 0 && y > 0) return Math.PI / 2;
-  if (x === 0 && y < 0) return -Math.PI / 2;
-  return 0.0;
-};
-
-const degrees = (radians: number): number => radians * 180.0 / Math.PI;
-const radians = (degrees: number): number => degrees * Math.PI / 180.0;
-
-const CartesianToPolar = (x: number, y: number): [number, number] => {
-  const r = sqrt(x**2 + y**2);
-  const theta = degrees(atan2(y, x));
-  return [r, theta];
-};
-
-const PolarToCartesian = (r: number, theta: number): [number, number] => {
-  const thetaRad = radians(theta);
-  const x = r * Math.cos(thetaRad);
-  const y = r * Math.sin(thetaRad);
-  return [x, y];
-};
-
 const Home = () => {
-  const [conversionType, setConversionType] = useState<string>('1');
-  const [x, setX] = useState<number>(0);
-  const [y, setY] = useState<number>(0);
-  const [r, setR] = useState<number>(0);
-  const [result, setResult] = useState<string | null>(null);
-  const [shaking, setIsShaking] = useState<boolean>(false);
-  const [theta, setTheta] = useState<number>(0);
+    const initialRow = Array(3).fill(0); // Create an array filled with 0s
+    const initialMatrix = Array.from({ length: 3 }, () => [...initialRow]); // Create a 3x3 matrix with initial values as 0
 
-  
+    const [matrix, setMatrix] = useState<number[][]>(initialMatrix);
+    const [inverseMatrix, setInverseMatrix] = useState<number[][]>(initialMatrix);
+    const [error, setError] = useState<string>('');
 
-  const handleConversion = () => {
-    setIsShaking(true);
-    setTimeout(() => {
-    setIsShaking(false);
-  }, 500);
-    if (conversionType === '1') {
-      const [r, theta] = CartesianToPolar(x, y);
-      setResult(`Koordinat kartesius (${x}, ${y}) dalam koordinat polar adalah (r = ${r}, θ = ${theta} derajat)`);
-    } else if (conversionType === '2') {
-      const [x, y] = PolarToCartesian(r, theta);
-      setResult(`Koordinat polar (r = ${r}, θ = ${theta} derajat) dalam koordinat kartesius adalah (x = ${x}, y = ${y})`);
-    }
-  };
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, rowIdx: number, colIdx: number) => {
+        const value = parseFloat(e.target.value);
+        if (!isNaN(value)) {
+            const newMatrix = matrix.map((row, rIdx) =>
+                rIdx === rowIdx ? row.map((col, cIdx) => (cIdx === colIdx ? value : col)) : row
+            );
+            setMatrix(newMatrix);
+        }
+    };
 
-  return (
-    <div className="screen bg-neutral-100 overflow-hidden mx-auto flex justify-center items-center">
+    const calculateInverse = () => {
+        try {
+            const determinant = sarrusDeterminant(matrix);
+            if (determinant === 0) {
+                throw new Error("Nilai matriks yang dimasukkan tidak memiliki invers karena determinan adalah 0");
+            }
+
+            const cofactors: number[][] = [];
+            for (let r = 0; r < 3; r++) {
+                const cofactorRow: number[] = [];
+                for (let c = 0; c < 3; c++) {
+                    const minor: number = matrix[(c + 1) % 3][(r + 1) % 3] * matrix[(c + 2) % 3][(r + 2) % 3] - matrix[(c + 1) % 3][(r + 2) % 3] * matrix[(c + 2) % 3][(r + 1) % 3];
+                    cofactorRow.push(((-1) ** (r + c)) * minor);
+                }
+                cofactors.push(cofactorRow);
+            }
+
+            const newInverseMatrix: number[][] = Array.from({ length: 3 }, () => Array(3).fill(0));
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    newInverseMatrix[r][c] = cofactors[c][r] / determinant;
+                }
+            }
+
+            setInverseMatrix(newInverseMatrix);
+            setError('');
+        } catch (e: any) {
+            setError(e.message);
+        }
+    };
+
+    return (
+        <>
+        
+
+
+
+
+        <div className="screen bg-neutral-100 mx-auto flex justify-center items-center">
       <div className="phone w-1/2 h-screen flex justify-center items-center">
       <div className="h-full py-8 flex flex-col justify-around items-center">
         <div className="text-lg text-center">
           <h2 className='font-bold'>HASIL KERJA UAS GENAP</h2>
           <h2 className='font-bold'>APLIKASI KONVERSI KOORDINAT POLAR KE KARTESIUS DAN SEBALIKNYA</h2>
           <p className='text-sm mt-'>Diselesaikan guna memenuhi tugas akhir pada mata kuliah Kalkulus II</p>
-          <p className='text-sm'>Dosen Pengampu: Buang Budi Wahono, S. Kom., M. Si.</p>
+          <p className='text-sm'>Dosen Pengampu: Buang Budi Wahono, S. Si., M. Kom.</p>
         </div>
         <div className="w-[30vh] h-[30vh] flex justify-center items-center image">
           <Image src={profile} className='hover:opacity-50 duration-200' style={{width: '20vh', height: '20vh', borderRadius: '100%', objectFit: 'cover', objectPosition: 'top', transform: 'rotate(-40deg)'}} alt='profile' />
@@ -91,54 +85,83 @@ const Home = () => {
       </div>
 
 
-      <div className="phone w-1/2 h-screen pr-8 relative rounded-l-3xl shadow-xl overflow-hidden">
+      <div className="phone w-1/2 pr-8 relative rounded-l-3xl shadow-xl overflow-hidden">
       <div className="background absolute w-[200vh] h-[200vh]"></div>
 
-      <div className='px-8 grid gap-y-6 py-6 z-1 relative'>
-      <h1 className='text-3xl font-extrabold text-center mb-2'>Aplikasi Konversi koordinat Polar ke Kartesius dan Sebaliknya</h1>
-      <div className='grid gap-y-2'>
-        <label className='font-bold text-lg'>Pilih jenis konversi:</label>
-        <select value={conversionType} onChange={(e) => setConversionType(e.target.value)} className='p-2 rounded-xl focus:border-neutral-700'>
-          <option value="1">Kartesius ke Polar</option>
-          <option value="2">Polar ke Kartesius</option>
-        </select>
-      </div>
-      {conversionType === '1' && (
-        <div className='grid gap-y-4'>
-          <div className='grid gap-y-2'>
-            <label className='font-bold'>Masukkan koordinat x: </label>
-            <input type="number" value={x} onChange={(e) => setX(parseFloat(e.target.value))} className='p-2 rounded-xl focus:border-neutral-700' />
-          </div>
-          <div className='grid gap-y-2'>
-            <label className='font-bold text-lg'>Masukkan koordinat y: </label>
-            <input type="number" value={y} onChange={(e) => setY(parseFloat(e.target.value))} className='p-2 rounded-xl focus:border-neutral-700'/>
-          </div>
-        </div>
-      )}
-      {conversionType === '2' && (
-        <div className='grid gap-y-4'>
-          <div className='grid gap-y-2'>
-            <label className='font-bold text-lg'>Masukkan koordinat r: </label>
-            <input type="number" value={r} onChange={(e) => setR(parseFloat(e.target.value))} className='p-2 rounded-xl focus:border-neutral-700'/>
-          </div>
-          <div className='grid gap-y-2'>
-            <label className='font-bold text-lg'>Masukkan sudut θ dalam derajat: </label>
-            <input type="number" value={theta} onChange={(e) => setTheta(parseFloat(e.target.value))} className='p-2 rounded-xl focus:border-neutral-700'/>
-          </div>
-        </div>
-      )}
-      <button onClick={handleConversion} className='font-bold text-xl bg-neutral-700 text-white px-4 py-2 w-[60%] mx-auto rounded-full hover:bg-neutral-900 duration-300'>Convert</button>
-      <div className={`relative border-2 border-black px-2 py-6 rounded-2xl mt-4 bg-white ${shaking && 'shake'}`}>
-        <p className="absolute font-bold text-lg -top-[30%] bg-neutral-700 text-white px-4 py-2 rounded-xl">Hasil:</p>
-        {result ? <p className='font-bold px-2'>{result}</p> : <p className='opacity-50 px-2'>Opsss .... Silakan masukkan angka terlebih dahulu untuk mengetahui hasil konversi</p>
-}
-      </div>
-      </div>
+      <div className="h-screen overflow-scroll px-8 grid gap-y-6 py-6 z-1 relative">
+            <h1 className="text-3xl font-extrabold text-center mb-2">Aplikasi Opearsi Invers Matriks Bujur Sangkar (3 x 3) dengan metode Sarrus</h1>
+            <div className="grid gap-y-2">
+            <label className='font-bold text-lg'>Masukkan nilai pada kolom dan baris berikut: </label>
+                {matrix.map((row, rIdx) => (
+                    <div key={rIdx} className="grid grid-cols-3 gap-4">
+                        {row.map((col, cIdx) => (
+                            <input
+                                key={cIdx}
+                                type="number"
+                                value={col}
+                                onChange={(e) => handleInputChange(e, rIdx, cIdx)}
+                                className='p-2 rounded-xl focus:border-neutral-700 my-1'
+                            />
+                        ))}
+                    </div>
+                ))}
+            </div>
+            
+            <h2 className="text-xl font-bold">Nilai matriks asli:</h2>
+            {matrix.map((row, rIdx) => (
+    <div className='grid grid-cols-3 gap-4' key={rIdx}>
+        {row.map((element, idx) => (
+            <div key={idx} className='p-2 rounded-xl focus:border-neutral-700 bg-white'>
+                {element}
+                {idx !== row.length - 1 && <p className=""></p>}
+            </div>
+        ))}
+    </div>
+))}
+
+<button onClick={calculateInverse} className="font-bold text-xl bg-blue-600 text-white px-4 py-2 w-[60%] mx-auto rounded-full hover:bg-blue-800 duration-300'">
+                Hitung Invers
+            </button>
+            <div className={`relative border-2 border-black px-2 py-6 rounded-2xl mt-4 bg-white  'shake'}`}>
+        <p className="absolute font-bold text-lg -top-[10%] bg-blue-600 text-white px-4 py-2 rounded-xl">Hasil:</p>
+    <div>
+        <h2 className="text-lg font-bold mt-2 mb-2">Invers Matriks Bujur Sangkar (3 x 3):</h2>
+        {error ? (
+    <p className="text-red-500 font-bold">{error}</p>
+) : (
+    <div>
+        {inverseMatrix.map((row, rIdx) => (
+            <div className='grid grid-cols-3 gap-4' key={rIdx}>
+                {row.map((element, idx) => (
+                    <div key={idx} className='p-2 rounded-xl border-2 border-black my-2'>
+                        {element}
+                        {idx !== row.length - 1 && <p className=""></p>}
+                    </div>
+                ))}
+            </div>
+        ))}
+    </div>
+)}
 
       
-      </div>
+            </div>
+            </div>
+            </div>
+            </div>
     </div>
-  );
+        </>
+    );
 };
 
 export default Home;
+
+function sarrusDeterminant(matrix: number[][]) {
+    return (
+        matrix[0][0] * matrix[1][1] * matrix[2][2] +
+        matrix[0][1] * matrix[1][2] * matrix[2][0] +
+        matrix[0][2] * matrix[1][0] * matrix[2][1] -
+        matrix[0][2] * matrix[1][1] * matrix[2][0] -
+        matrix[0][0] * matrix[1][2] * matrix[2][1] -
+        matrix[0][1] * matrix[1][0] * matrix[2][2]
+    );
+}
