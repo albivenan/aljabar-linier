@@ -21,31 +21,31 @@ const Home = () => {
         }
     };
 
-    const calculateInverse = () => {
+    const operasiInvers = () => {
         try {
-            const determinant = sarrusDeterminant(matriks);
-            if (determinant === 0) {
+            const determinan = sarrusDeterminan(matriks);
+            if (determinan === 0) {
                 throw new Error("Nilai matriks yang dimasukkan tidak memiliki invers karena determinan adalah 0");
             }
 
-            const cofactors: number[][] = [];
+            const kofaktor: number[][] = [];
             for (let r = 0; r < 3; r++) {
                 const cofactorRow: number[] = [];
                 for (let c = 0; c < 3; c++) {
                     const minor: number = matriks[(c + 1) % 3][(r + 1) % 3] * matriks[(c + 2) % 3][(r + 2) % 3] - matriks[(c + 1) % 3][(r + 2) % 3] * matriks[(c + 2) % 3][(r + 1) % 3];
                     cofactorRow.push(((-1) ** (r + c)) * minor);
                 }
-                cofactors.push(cofactorRow);
+                kofaktor.push(cofactorRow);
             }
 
-            const newInverseMatrix: number[][] = Array.from({ length: 3 }, () => Array(3).fill(0));
+            const inversMatriksBaru: number[][] = Array.from({ length: 3 }, () => Array(3).fill(0));
             for (let r = 0; r < 3; r++) {
                 for (let c = 0; c < 3; c++) {
-                    newInverseMatrix[r][c] = cofactors[c][r] / determinant;
+                    inversMatriksBaru[r][c] = kofaktor[c][r] / determinan;
                 }
             }
 
-            setInverseMatrix(newInverseMatrix);
+            setInverseMatrix(inversMatriksBaru);
             setError('');
         } catch (e: any) {
             setError(e.message);
@@ -119,7 +119,7 @@ const Home = () => {
     </div>
 ))}
 
-<button onClick={calculateInverse} className="font-bold text-xl bg-blue-600 text-white px-4 py-2 w-[60%] mx-auto rounded-full hover:bg-blue-800 duration-300'">
+<button onClick={operasiInvers} className="font-bold text-xl bg-blue-600 text-white px-4 py-2 w-[60%] mx-auto rounded-full hover:bg-blue-800 duration-300'">
                 Hitung Invers
             </button>
             <div className={`relative border-2 border-black px-2 py-6 rounded-2xl mt-4 bg-white  'shake'}`}>
@@ -155,7 +155,7 @@ const Home = () => {
 
 export default Home;
 
-function sarrusDeterminant(matriks: number[][]) {
+function sarrusDeterminan(matriks: number[][]) {
     return (
         matriks[0][0] * matriks[1][1] * matriks[2][2] +
         matriks[0][1] * matriks[1][2] * matriks[2][0] +
