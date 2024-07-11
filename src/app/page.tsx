@@ -133,7 +133,7 @@ const Home = () => {
         {inversMatriks.map((row, rIdx) => (
             <div className='grid grid-cols-3 gap-4' key={rIdx}>
                 {row.map((element, idx) => (
-                    <div key={idx} className='p-2 rounded-xl border-2 border-black my-2'>
+                    <div key={idx} className='p-2 rounded-xl border-2 border-black my-2 overflow-scroll'>
                         {element}
                         {idx !== row.length - 1 && <p className=""></p>}
                     </div>
